@@ -268,11 +268,6 @@ tab1 <- tab1 %>%
   )
 
 
-
-#tab1 %>%
-#  mutate(`Monto 2025` = scales::comma(`Monto 2025`, big.mark = ".", decimal.mark = ",")) %>%
-#  kable(caption = paste(" Resúmen del monto presupuestario de 2025 por región"), col.names = #c("Región","Monto 2025 (Miles de millones)")) %>%
-#  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) 
   
 
 ```
@@ -2717,7 +2712,7 @@ mutate(NombreComuna = case_when(NombreComuna == "MACHALI" ~ "MACHALÍ",
 
 
 <div style="text-align: justify;">
-La asignación de inversión 2025 en nuevos proyectos del eje de seguridad hídrica para la región de O’Higgins muestra una marcada priorización del riego sobre el consumo humano. La inversión en infraestructura para riego asciende a 23.452.355 miles de pesos (73,716%), cifra que representa casi tres cuartas partes del total. En contraste, los recursos destinados a proyectos de consumo humano son significativamente menores, alcanzando 8.361.910 miles de pesos (26,284%).
+La asignación de inversión 2025 en nuevos proyectos del eje de seguridad hídrica para la región de O’Higgins ("Figura 29") muestra una marcada priorización del riego sobre el consumo humano. La inversión en infraestructura para riego asciende a 23.452.355 miles de pesos (73,716%), cifra que representa casi tres cuartas partes del total. En contraste, los recursos destinados a proyectos de consumo humano son significativamente menores, alcanzando 8.361.910 miles de pesos (26,284%).
 </div>
 
 
@@ -3113,7 +3108,7 @@ kable(otros_data_NUBLE, "html", col.names = c("Servicio", "Inversión", "Porcent
 ```
 
 <div style="text-align: justify;">
-A través de la "Figura 34", en ambas categorías, la mayor inversión se destina a 'Integración territorial, conectividad y movilidad', con 61.107.743 miles de pesos (39,81%) en proyectos de arrastre y 61.738.365 miles de pesos (40,22%) en nuevos proyectos. 'Seguridad hídrica' es el segundo eje más relevante, con 6.181.187 miles de pesos (4,03%) en proyectos de arrastre y una asignación mayor en nuevos proyectos, alcanzando 16.989.340 miles de pesos (11,07%). Por otro lado, 'Seguridad ciudadana y ante desastres naturales y emergencias' muestra una leve participación, con 4.72% del total, en la misma línea, el eje de 'Desarrollo Productivo, Social, Cultural y Científico' considera aproximadamente un porcentaje mínimo de la inversión total (aproximadamente un 0,15%).
+A través de la "Figura 34", en ambas categorías, la mayor inversión se destina a 'Integración territorial, conectividad y movilidad', con 61.107.743 miles de pesos (39,81%) en proyectos de arrastre y 61.738.365 miles de pesos (40,22%) en nuevos proyectos. 'Seguridad hídrica' es el segundo eje más relevante, con 6.181.187 miles de pesos (4,03%) en proyectos de arrastre y una asignación mayor en nuevos proyectos, alcanzando 16.989.340 miles de pesos (11,07%). Por otro lado, 'Seguridad ciudadana y ante desastres naturales y emergencias' muestra una leve participación, con 4.72% del total, en la misma línea, el eje de 'Desarrollo Productivo, Social, Cultural y Científico' considera aproximadamente un porcentaje mínimo de la inversión total (0,15%).
 </div>
 
 
@@ -3187,18 +3182,18 @@ ggplot(tab_eje_ministerial_cat_NUBLE, aes(x = `Eje Ministerial`, y = Monto2025, 
 ```
 
 <div style="text-align: justify;">
-La mayoría de las comunas presentan un crecimiento poblacional positivo -a excepción de Portezuelo (-0,1%)-, con tasas que oscilan entre 0,9% (El Carmen) y 16,4% (Chillán Viejo). 
+La mayoría de las comunas ("Tabla 22") presentan un crecimiento poblacional positivo -a excepción de Portezuelo (-0,1%)-, con tasas que oscilan entre 0,9% (El Carmen) y 16,4% (Chillán Viejo). 
 </div>
 
 
 <div style="text-align: justify;">
-Chillán es una de las comunas con mayor en número de personas en situación de pobreza multidimensional (25.651 personas), seguido de San Carlos (8.555 personas) y Coihueco (7.058 personas), reflejando una concentración de vulnerabilidad en las comunas con mayor población.
+Chillán es una de las comunas con mayor número de personas en situación de pobreza multidimensional (25.651 personas), seguido de San Carlos (8.555 personas) y Coihueco (7.058 personas), reflejando una concentración de vulnerabilidad en las comunas con mayor población.
 </div>
 
 
 <div style="text-align: justify;">
 En términos de magnitud de inversión, Chillán recibe el mayor monto con 12.674.482 miles de pesos, lo que es consistente con su alto nivel de población y pobreza multidimensional.
-Comunas con menor población y pobreza multidimensional, como San Ignacio (2.063.339 miles de pesos) y Ñiquén (2.352.972 miles de pesos), reciben montos significativos, lo que indica que la inversión no sigue estrictamente la densidad poblacional ni la cantidad de personas en situación de pobreza multidimensional.
+Comunas con menor población y pobreza multidimensional, como San Ignacio (2.063.339 miles de pesos) y Ñiquén (2.352.972 miles de pesos), reciben montos más altos que comunas con mayor densidad poblacional y más personas en situación de pobreza multidimensional -como San Carlos- lo que indica que la inversión no tiene una proporcionalidad directa con la densidad poblacional ni la cantidad de personas en situación de pobreza multidimensional.
 </div>
 
 
@@ -3267,7 +3262,7 @@ mutate(`Población 2017` = scales::comma(`Población 2017`, big.mark = ".", deci
 
 
 <div style="text-align: justify;">
-La "Figura 35", muestra la asignación de inversión 2025 en nuevos proyectos del eje de Seguridad hídrica para la Región de Ñuble, este deja ver una clara orientación hacia el 'Riego' (61,56%) sobre el consumo humano (38,44%), lo que indica un mayor enfoque en la infraestructura agrícola y productiva en lugar del abastecimiento urbano de agua potable.
+La "Figura 35", muestra la asignación de inversión 2025 en nuevos proyectos del eje de Seguridad hídrica para la región del Ñuble, este deja ver una clara orientación hacia el 'Riego' (61,56%) sobre el consumo humano (38,44%), lo que indica un mayor enfoque en la infraestructura agrícola y productiva en lugar del abastecimiento urbano de agua potable.
 </div>
 
 
@@ -3393,7 +3388,7 @@ kable(otros_data_BBIO, "html", col.names = c("Servicio", "Inversión", "Porcenta
 
 
 <div style="text-align: justify;">
-En la "Figura 37", el eje de "Integración territorial, conectividad y movilidad" recibe la mayor parte de la inversión en ambas categorías, con 132.398.801 miles de pesos (42,10%) en proyectos de arrastre y 115.921.316 miles de pesos (36,86%) en proyectos nuevos, lo que consolida la importancia del desarrollo vial en la región del Biobío. Por otro lado, la inversión dentro del eje de 'Seguridad hídrica' es significativamente menor, con un 2,98% en los proyectos de arrastre y un aumento en la iniciativas nuevas (4,99%). Por otro lado, los ejes de 'Seguridad Ciudadana y ante desastres naturales y emergencias' y de 'Desarrollo productivo, social, cultural y científico' consideran un porcentaje muy bajo de la inversión total en la región (9.84% y 3.24% respectivamente).
+En la "Figura 37", el eje de "Integración territorial, conectividad y movilidad" recibe la mayor parte de la inversión en ambas categorías, con 132.398.801 miles de pesos (42,10%) en proyectos de arrastre y 115.921.316 miles de pesos (36,9%) en proyectos nuevos, lo que consolida la importancia del desarrollo vial en la región del Biobío. Por otro lado, la inversión dentro del eje de 'Seguridad hídrica' es significativamente menor, con un 3% en los proyectos de arrastre y un aumento en la iniciativas nuevas (5%). Los ejes de 'Seguridad Ciudadana y ante desastres naturales y emergencias' y de 'Desarrollo productivo, social, cultural y científico' consideran un porcentaje muy bajo de la inversión total en la región (9.8% y 3.2% respectivamente).
 </div>
 
 ```{r, fig.cap = NULL}
@@ -3466,7 +3461,7 @@ ggplot(tab_eje_ministerial_cat_BIOBIO, aes(x = `Eje Ministerial`, y = Monto2025,
 ```
 
 <div style="text-align: justify;">
-En la "Tabla 24", se puede ver que el crecimiento poblacionalrelativo varía entre 4,0% (Quilleco) y 17,6% (San Pedro de la Paz). San Pedro de la Paz, con un aumento del 17,6% (pasando de 131.808 a 155.071 habitantes), presenta el crecimiento más alto de la región y un nivel alto de personas en situación de pobreza multidimensional (14.254). Los Ángeles es una comuna con una de las más altas densidades poblacionales y tiene una alta cantidad de personas en situación de pobreza multidimensional, con 31.289 habitantes.
+En la "Tabla 24", se puede ver que el crecimiento poblacional relativo varía entre 4,0% (Quilleco) y 17,6% (San Pedro de la Paz). San Pedro de la Paz, con un aumento del 17,6% (pasando de 131.808 a 155.071 habitantes en 2025), presenta el crecimiento más alto de la región y un nivel alto de personas en situación de pobreza multidimensional (14.254). Los Ángeles es una comuna con una de las más altas densidades poblacionales y tiene una alta cantidad de personas en situación de pobreza multidimensional, con 31.289 habitantes.
 </div>
 
 <div style="text-align: justify;">
@@ -3539,7 +3534,7 @@ mutate(`Población 2017` = scales::comma(`Población 2017`, big.mark = ".", deci
 ```
 
 
-En la "Figura 38", la inversión en proyectos nuevos dentro del eje de 'Seguridad Hídrica' se concentra mayoritariamente en el 'Consumo humano', con una asignación de 14.681.126 miles de pesos (93,54%), lo que refleja una clara prioridad en garantizar el acceso al agua potable para la población. En contraste, la inversión destinada a gestión alcanza 601.887 miles de pesos (3,83%), mientras que estudios y otros reciben 410.379 miles de pesos (2,62%), lo que sugiere una menor atención en planificación y análisis técnico del recurso hídrico. Finalmente, la inversión para proyectos relacionados al 'Riego' solo recibe 1.052 miles de pesos (0,007%).
+En la "Figura 38", la inversión en proyectos nuevos dentro del eje de 'Seguridad Hídrica' se concentra mayoritariamente en el 'Consumo humano', con una asignación de 14.681.126 miles de pesos (93,543%), lo que refleja una clara prioridad en garantizar el acceso al agua potable para la población. En contraste, la inversión destinada a gestión alcanza 601.887 miles de pesos (3,835%), mientras que estudios y otros reciben 410.379 miles de pesos (2,615%), lo que sugiere una menor atención en planificación y análisis técnico del recurso hídrico. Finalmente, la inversión para proyectos relacionados al 'Riego' solo recibe 1.052 miles de pesos (0,007%).
 
 
 
@@ -4019,16 +4014,16 @@ theme(
 
 
 <div style="text-align: justify;">
-El análisis de la "Tabla 28", muestra variaciones en la distribución de los recursos, sin tener una correlación directa con la densidad poblacional o con la cantidad de personas en situación de pobreza multidimensional. Valdivia, la comuna más grande de la región de Los Ríos con 183.287 habitantes en 2025 y 24.955 personas en pobreza multidimensional, recibe la mayor inversión con 26.323.936 miles de pesos.
+La "Tabla 28", muestra variaciones en la distribución de los recursos, sin tener una correlación directa con la densidad poblacional o con la cantidad de personas en situación de pobreza multidimensional. Valdivia, la comuna más grande de la región de Los Ríos con 183.287 habitantes en 2025 y 24.955 personas en pobreza multidimensional, recibe la mayor inversión con 26.323.936 miles de pesos.
 </div>
 
 <div style="text-align: justify;">
-Sin embargo, otras comunas con menor población y niveles de pobreza reciben inversiones elevadas, como Corral (5.416 habitantes, 1.259 personas en situación de pobreza multidimensional) con 17.010.714 miles de pesos, o Lago Ranco (10.262 habitantes, 3.647 personas en situación de pobreza multidimensional) con 15.254.952 miles de pesos.
+Comunas con menor población y niveles de pobreza reciben inversiones elevadas, como Corral (5.416 habitantes, 1.259 personas en situación de pobreza multidimensional) con 17.010.714 miles de pesos, o Lago Ranco (10.262 habitantes, 3.647 personas en situación de pobreza multidimensional) con 15.254.952 miles de pesos. En contraste, comunas con una población mayor y una cantidad significativa de personas en situación de pobreza multidimensional reciben menos recursos, como Lanco (18.140 habitantes, 2.796 personas en situación de pobreza multidimensional) con 2.572.521 miles de pesos. Este patrón sugiere que la inversión no sigue un criterio exclusivamente basado en población o pobreza multidimensional, sino que responde a otros factores.
 </div>
 
-<div style="text-align: justify;">
-Por otro lado, comunas con una población mayor y una cantidad significativa de personas en situación de pobreza multidimensional reciben menos recursos, como Lanco (18.140 habitantes, 2.796 personas en situación de pobreza multidimensional) con 2.572.521 miles de pesos. Este patrón sugiere que la inversión no sigue un criterio exclusivamente basado en población o pobreza multidimensional, sino que responde a otros factores.
-</div>
+
+
+
 
 
 
@@ -4092,7 +4087,7 @@ mutate(`Población 2017` = scales::comma(`Población 2017`, big.mark = ".", deci
 
 
 <div style="text-align: justify;">
-En la "Figura 44", se muestra la asignación de inversión 2025 en nuevos proyectos del eje de Seguridad Hídrica para la región de Los Ríos, donde la distribución de los recursos está altamente concentrada en el 'Consumo humano', que recibe 13.229.060 miles de pesos, representando el 99,742% del total. Este alto porcentaje sugiere un enfoque casi exclusivo en garantizar el abastecimiento de agua potable para la población, con una asignación muy pequeña (0,258%) a la categoría 'Estudios y otros'. 
+En la "Figura 44", se muestra la asignación de inversión 2025 en nuevos proyectos del eje de 'Seguridad Hídrica' para la región de Los Ríos, donde la distribución de los recursos está altamente concentrada en el 'Consumo humano', que recibe 13.229.060 miles de pesos, representando el 99,742% del total. Este alto porcentaje sugiere un enfoque casi exclusivo en garantizar el abastecimiento de agua potable para la población, con una asignación muy pequeña (0,258%) a la categoría 'Estudios y otros'. 
 </div>
 
 
@@ -4217,7 +4212,7 @@ kable(otros_data_LAGOS, "html", col.names = c("Servicio", "Inversión", "Porcent
 
 
 <div style="text-align: justify;">
-En la "Figura 46", eje de 'Integración territorial, conectividad y movilidad' tiene gran parte de la inversión en ambas categorías, con 134.934.255 miles de pesos en proyectos de arrastre (31,45%) y 242.696.884 miles de pesos en proyectos nuevos (56,58%). En contraste, los demás ejes ministeriales consideran un porcentaje muy bajo de la inversión:  'Desarrollo Productivo, Social, Cultural y Científico' (5,51%), 'Seguridad ciudadana y ante desastres naturales y emergencias' (2,36%) y para 'Seguridad hídrica' un 4,11%.
+En la "Figura 46", el eje de 'Integración territorial, conectividad y movilidad' tiene gran parte de la inversión en ambas categorías, con 134.934.255 miles de pesos en proyectos de arrastre (31,45%) y 242.696.884 miles de pesos en proyectos nuevos (56,58%). En contraste, los demás ejes ministeriales consideran un porcentaje muy bajo de la inversión total:  'Desarrollo Productivo, Social, Cultural y Científico' (5,51%), 'Seguridad ciudadana y ante desastres naturales y emergencias' (2,36%) y para 'Seguridad hídrica' un 4,11%.
 </div>
 
 ```{r, fig.cap = NULL}
@@ -4291,17 +4286,12 @@ theme(
 
 
 <div style="text-align: justify;">
-De la "Tabla 30", se observa un crecimiento poblacional positivo en la mayoría de las comunas, con Puerto Montt registrando el mayor porcentaje de crecimiento relativo, pasando de 44.578 a	51.951 habitantes (16,54%), mientras que comunas como San Juan de la Costa (-1,77%) y Río Negro (-0,34%) presentan ligeras disminuciones.
+De la "Tabla 30", se observa un crecimiento poblacional positivo en la mayoría de las comunas, Puerto Varas (16,54%) y Puerto Montt (15,31%) tienen los mayores crecimientos relativos de población del 2017 al 2025, mientras que comunas como San Juan de la Costa (-1,77%) y Río Negro (-0,34%) presentan ligeras disminuciones. En términos de pobreza multidimensional, Puerto Montt cuenta con 42.856 personas en esta situación, seguida de Osorno con 24.959 y Calbuco con 12.352, lo que indica una concentración de vulnerabilidad en las comunas con mayor densidad poblacional.
 </div>
 
 
 <div style="text-align: justify;">
-En términos de pobreza multidimensional, Puerto Montt cuenta con 42.856 personas en esta situación, seguida de Osorno con 24.959 y Calbuco con 12.352, lo que indica una concentración de vulnerabilidad en las comunas con mayor densidad poblacional para el año 2025.
-</div>
-
-
-<div style="text-align: justify;">
-Sin embargo, la distribución de la inversión no siempre está orientada hacia las comunas con mayor densidad poblacional o con mayor cantidad de personas en situación de pobreza multidimensional, ya que Calbuco recibe 28.066.185 miles de pesos, cifra que supera significativamente a Puerto Montt (12.958.910 miles de pesos) y Osorno (2.952.325 miles de pesos). Por otro lado, comunas con menor población y niveles de pobreza relativamente bajos, como Quellón (8.910 personas en pobreza multidimensional) y Quinchao (2.076 personas), reciben inversiones considerables de 13.348.626 y 2.107.612 miles de pesos, respectivamente.
+La distribución de la inversión no siempre está orientada hacia las comunas con mayor densidad poblacional o con mayor cantidad de personas en situación de pobreza multidimensional, ya que Calbuco recibe 28.066.185 miles de pesos, cifra que supera significativamente a Puerto Montt (12.958.910 miles de pesos) y Osorno (2.952.325 miles de pesos). Por otro lado, comunas con menor población y niveles de pobreza relativamente bajos, como Quellón (8.910 personas en pobreza multidimensional) y Quinchao (2.076 personas), reciben inversiones considerables de 13.348.626 y 2.107.612 miles de pesos, respectivamente.
 </div>
 
 ```{r}

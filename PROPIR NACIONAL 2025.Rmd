@@ -1,0 +1,695 @@
+---
+output: 
+  bookdown::html_document2:
+    theme: united
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    number_sections: false
+lang: es
+css: styles.css
+---
+
+```{=html}
+<style>
+  .section {
+    border-top: 2px solid black;
+    margin-top: 20px;
+    padding-top: 10px;
+  }
+</style>
+```
+
+
+
+<div class="Análisis Análisis Descriptivo de Ante-Proyecto 
+de Ley 2025 MOP">
+  <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 100px; text-align: center;">Informe de Estadísticas <br> Programa Público Inversión Regional (PROPIR) 2025 <br> Edición 2025 </div>
+  <div style="text-align: center;">
+  <img src="mop.jpeg" alt="" width="30%">
+</div>
+<div style="font-size: 1.9em; color: black; margin-top: 100px; text-align: center;">
+  Departamento de Estadísticas y Gestión Institucional
+</div>
+<div style="font-size: 1.5em; color: black; margin-top: 100px; text-align: center;">
+  Unidad Gestión del Conocimiento y Tecnología
+</div>
+<div class="fecha" style="text-align: center;">
+  Febrero 2025
+</div>
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+options(knitr.fig.caption = TRUE)
+knitr::opts_knit$set(lang = "es")
+knitr::opts_chunk$set(fig.cap = "Figura ")
+```
+
+```{r, include=FALSE}
+library(knitr) ; library(kableExtra); library(ggplot2); library(tinytex); library(dplyr); library(scales); library(readxl); library(paletteer); library(viridis); library(gridExtra); library(ggrepel); library(htmltools); library(tidyr)
+Sys.setlocale("LC_ALL", "es_ES.UTF-8") 
+```
+
+```{r, echo=FALSE, results='hide'}
+
+#####################################################################################################
+
+#Este es un análisis previo, para dejar la base de datos con el mismo formato de nombres de variables
+#y categorizaciones de los respectivos gráficos
+
+
+#####################################################################################################
+
+
+# En esta sección, hice un vector de categorías 
+# para que después en las tablas y gráficos
+# las regiones se vean ordenadas de 1-17(esta última es
+# interregional)
+
+#el orden_regiones es el orden de las regiones pero para los gráficos, mientras que 
+#orden_regiones_tab es el orden para las tablas. Todo esto con el fin #de que tenga el orden del mapa de chile
+
+
+
+orden_regiones <- c("INTERREGIONAL","MAGALLANES","AYSÉN","LOS LAGOS","LOS RÍOS","LA ARAUCANÍA","BIOBÍO","ÑUBLE","MAULE",
+                    "O'HIGGINS", "METROPOLITANA","VALPARAÍSO","COQUIMBO","ATACAMA","ANTOFAGASTA","TARAPACÁ","ARICA Y PARINACOTA")
+
+
+
+
+PROYECCIONES_POBmulti <- read_excel("PROYECCIONES_POBmultiPROPIR.xlsx")
+
+
+
+BASE <- read_excel("BASE_PROPIR.xlsx")
+ 
+
+#primero que todo, eliminamos aquellos proyectos que tengan monto cero
+
+
+BASE <- BASE %>% filter(`Monto 2025` > 0)
+
+
+ 
+ #############################################
+ # Añadiendo la Abreviación de los servicios #
+ #############################################
+
+
+#para el cambio hay que fijarse bien si los nombres del servicios #corresponden a estos, o si se agregaron nuevos. Si es así, añadirlos #en el case_when
+
+
+BASE <- BASE %>% mutate(Servicio = case_when(Servicio == "Dirección de Arquitectura" ~ "DA",
+                                              Servicio == "Dirección de Obras Hidráulicas" ~ "DOH",
+                                              Servicio == "Dirección de Vialidad" ~ "DV",
+                                              Servicio == "Dirección de Obras Portuarias" ~ "DOP",
+                                              Servicio == "Dirección de Aeropuertos" ~ "DAP",
+                                              Servicio == "Dirección de Planeamiento" ~ "DP",
+                                Servicio == "Subdirección de Servicios Sanitarios Rurales" ~ "SSR",
+                Servicio == "Conservaciones por Administración Directa - Dirección de Vialidad"  ~ "DV",
+            Servicio == "Conservaciones por Administración Directa - Dirección de Aeropuertos" ~ "DAP",
+            Servicio == "Dirección General de Concesiones de Obras Públicas" ~ "DGC",
+                                              Servicio == "Dirección General de Aguas" ~ "DGA",
+            Servicio == "Gestión Hídrica y Organizaciones-DGA" ~ "DGA",
+            Servicio == "Instituto Nacional de Hidráulica"  ~ "INH",
+            Servicio == "Superintendencia de Servicios Sanitarios" ~ "SISS"))
+ 
+ 
+#este cambio es solo para nacional
+BASE <- BASE %>%
+  mutate(SERVICIOS_A = case_when(
+    Servicio %in% c("INH", "SISS", "DP", "DGA", "DA") ~ "OTROS",
+    TRUE ~ Servicio
+  ))
+
+
+
+INV_2024 <- c(289863577, 149022385, 93856114, 335948501	, 199777526, 237492169, 258177982, 138672755	, 259531762, 140482140, 450284587, 228733528, 147258982, 171910543, 169487777, 61774839,131877484)
+#esta parte, necesariamente arreglarla todos los años porque puede que
+#se agreguen nuevos campos, por lo que es necesario categorizarlos.  TIENE QUE TENER EL ORDEN de #orden_regiones_tab
+
+
+aguasSH <- BASE %>% filter(Categoría == "Nuevo") %>% filter(`Eje Ministerial` == "Seguridad hídrica")
+
+
+
+BASE <- BASE %>%  
+  mutate(AGUA_DIPRES = case_when(PROGRAMA == "GRANDES OBRAS DE RIEGO" ~ "RIEGO",
+               PROGRAMA == "CONSERVACION DE OBRAS DE RIEGO" ~ "RIEGO",
+               PROGRAMA == "CONSERVACION DE SISTEMAS SANITARIOS RURALES" ~ "CONSUMO HUMANO",
+               PROGRAMA == "AMPLIACION Y MEJORAMIENTO DE SERVICIOS EXISTENTES DE AGUA POTABLE RURAL" ~ "CONSUMO HUMANO",
+               PROGRAMA == "AGUA POTABLE RURAL DISPERSO" ~ "CONSUMO HUMANO",
+               PROGRAMA == "REDES DE MEDICION" ~ "GESTIÓN",
+               PROGRAMA == "ANALISIS Y EVALUACIÓN" ~ "GESTIÓN",
+             PROGRAMA ==  "OBRAS MEDIANAS DE RIEGO" ~ "RIEGO",
+           PROGRAMA ==  "EXPLOTACION DE OBRAS DE RIEGO" ~ "RIEGO",
+          PROGRAMA ==  "OBRAS DE RIEGO" ~ "RIEGO",
+          PROGRAMA == "AGUA POTABLE RURAL SEMI CONCENTRADO" ~ "CONSUMO HUMANO",
+          PROGRAMA == "AGUA POTABLE RURAL CONCENTRADO" ~ "CONSUMO HUMANO",
+          PROGRAMA == "CONSTRUCCION" ~ "ESTUDIOS Y OTROS",
+          PROGRAMA == "RECONSTRUCCION" ~ "ESTUDIOS Y OTROS",
+       PROGRAMA == "ESTUDIOS" ~ "ESTUDIOS Y OTROS"))
+
+
+```
+
+## Introducción
+
+<div style="text-align: justify;">
+El Programa Público de Inversión (PROPIR), detalla la información de los comprometido y aprobado a realizar cada año en las Regiones. En este documento se presentan las estadísticas de los Servicios del Ministerio de Obras Públicas que se están ejecutando o tienen programado a ejecutar durante este año 2025.
+</div>
+
+<div style="text-align: justify;">
+Este análisis estadístico tiene como objetivo describir el PROPIR del presente año 2025 para así ver cómo se distribuye la inversión a lo largo del país y sumarlo a los instrumentos de análisis para el proceso de planificación. Este análisis descriptivo se divide en una sección a nivel nacional. Se presentarán tablas y gráficos en cada sección que se visualizan datos relevantes.
+</div>
+
+## Está dirigido
+
+<div style="text-align: justify;">
+Este documento está dirigido, en su primera etapa, al equipo de trabajo de la Dirección de Planeamiento (Dirplan), con el objetivo de proporcionar una base de conocimiento sólida sobre la inversión 2025. Para ello, se analizan diversas variables presentes en la base de datos PROPIR 2025 y su relación con factores exógenos, como la pobreza multidimensional, la población registrada en 2017 y la proyección poblacional para 2025. Este análisis busca ofrecer una visión integral de la inversión, permitiendo identificar tendencias y posibles impactos en el desarrollo regional y nacional. Se invita a los miembros de este equipo a revisar el contenido, formular observaciones y sugerencias, y aportar sus conocimientos y experiencias para enriquecer y fortalecer el análisis presentado, de manera que este sea una herramienta analítica que apoye la toma de decisiones estratégicas.
+</div>
+
+## Metodología
+
+<div style="text-align: justify;">
+Para obtener los resultados, estadísticas y gráficos, se utilizaron diversas fuentes de información, entre ellas la Planilla de Códigos Únicos Territoriales (CUT), las proyecciones de población para el año 2025, la población censal 2017, los datos de pobreza multidimensional 2022, y los registros del PROPIR 2024 y 2025. La integración de estas bases permitió realizar un análisis detallado de la distribución de población, condiciones socioeconómicas y presencia de inversiones del Ministerio de Obras Públicas (MOP) en distintas comunas del país para el año 2025.
+
+Para la construcción de la base consolidada, en una primera etapa, se unieron las proyecciones de población 2025, la población censal 2017 y los datos de pobreza multidimensional 2022, a través del código único identificador de comunas. Posteriormente, la base del PROPIR 2025 fue complementada con la información de la Planilla CUT, utilizando el nombre de comuna como clave de unión. Este paso permitió incorporar el código único territorial a la base PROPIR 2025, lo que garantizó compatibilidad con el resto de las fuentes de información. Finalmente, se realizó la unión de todas las bases a través del código único identificador de la comuna, generando así la base final utilizada en los análisis.
+
+
+En primera instancia, se filtra la base por aquellos proyectos que tienen monto asociado mayor que cero. Luego, con el fin de garantizar la consistencia y estandarización de los datos, se realizó un proceso de transformación de la variable correspondiente a cada servicio MOP, por lo que a cada uno de estos se le asignó la abreviación oficial, el procedimiento se encuentra en la "Tabla 0". Para la construcción de los gráficos y la presentación de la información en formato HTML, se utilizó el software estadístico de código abierto Rstudio, junto a los paquetes especializados en manipulación y visualización de datos.
+
+
+En la base de datos consolidada, existe una variable llamada 'Programa', que indica a cuál programa pertenecen los proyectos. Dada la relevancia del eje ministerial de 'Seguridad Hídrica', se exploraron los proyectos nuevos dentro de este eje. Por consiguiente, se filtra la base por proyectos nuevos que pertenezcan al eje de 'Seguridad Hídrica'. Dentro de este filtro, existían diferentes instancias dentro de la variable 'Programa', por lo que fue necesario un tipo de agrupación para visualizar la información de mejor manera, por lo que se crearon cuatro categorías. La primera es 'Consumo Humano' que está compuesta por los programas pertenecientes a: agua potable rural semi-concentrada, agua potable rural concentrada, agua potable rural disperso, ampliación y mejoramiento de servicios existentes de agua potable rural y conservación de sistemas sanitarios rurales . La segunda es 'Riego' que agrupa: grandes obras de riego, conservación de obras de riego, obras medianas de riego y obras de riego. La categoría 'Estudios y otros' reúne los siguientes programas asociados: estudios, Construcción y Reconstrucción. Finalmente, la categoría 'Gestión' abarca: redes de medición y análisis y evaluación.
+
+
+En cuanto a la fórmula de Crec/Decrec relativo de población de 2017 al 2025, se utiliza la siguiente expresión:
+
+\[
+\text{Crec/Decrec relativo de población 2017 al 2025} =
+\left( \frac{\text{Población 2025} - \text{Población 2017}}{\text{Población 2017}} \right) \times 100
+\]
+
+
+
+</div>
+
+
+
+
+<table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
+    <thead>
+        <tr>
+            <th style="padding: 8px; background-color: #f2f2f2;">Nombre Original del Servicio</th>
+            <th style="padding: 8px; background-color: #f2f2f2;">Abreviación Asignada</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td style="padding: 8px;">Dirección de Arquitectura</td><td style="padding: 8px;">DA</td></tr>
+        <tr><td style="padding: 8px;">Dirección de Obras Hidráulicas</td><td style="padding: 8px;">DOH</td></tr>
+        <tr><td style="padding: 8px;">Dirección de Vialidad</td><td style="padding: 8px;">DV</td></tr>
+        <tr><td style="padding: 8px;">Dirección de Obras Portuarias</td><td style="padding: 8px;">DOP</td></tr>
+        <tr><td style="padding: 8px;">Dirección de Aeropuertos</td><td style="padding: 8px;">DAP</td></tr>
+        <tr><td style="padding: 8px;">Dirección de Planeamiento</td><td style="padding: 8px;">DP</td></tr>
+        <tr><td style="padding: 8px;">Subdirección de Servicios Sanitarios Rurales</td><td style="padding: 8px;">SSR</td></tr>
+        <tr><td style="padding: 8px;">Conservaciones por Administración Directa - Dirección de Vialidad</td><td style="padding: 8px;">DV</td></tr>
+        <tr><td style="padding: 8px;">Conservaciones por Administración Directa - Dirección de Aeropuertos</td><td style="padding: 8px;">DAP</td></tr>
+        <tr><td style="padding: 8px;">Dirección General de Concesiones de Obras Públicas</td><td style="padding: 8px;">DGC</td></tr>
+        <tr><td style="padding: 8px;">Dirección General de Aguas</td><td style="padding: 8px;">DGA</td></tr>
+        <tr><td style="padding: 8px;">Gestión Hídrica y Organizaciones-DGA</td><td style="padding: 8px;">DGA</td></tr>
+        <tr><td style="padding: 8px;">Instituto Nacional de Hidráulica</td><td style="padding: 8px;">INH</td></tr>
+        <tr><td style="padding: 8px;">Superintendencia de Servicios Sanitarios</td><td style="padding: 8px;">SISS</td></tr>
+    </tbody>
+    <caption style="font-size: 12px; margin-top: 10px; color: #333; caption-side: bottom;">
+        Tabla 0: Asignación abreviaciones de los Servicios MOP
+    </caption>
+</table>
+
+
+
+## Nacional
+
+<div style="text-align: justify;">
+El análisis de la "Figura 1" muestra que el crecimiento relativo de la inversión PROPIR en 2025 respecto a 2024 es positivo en 13 de las 16 regiones del país. Regiones como Tarapacá (1,73) que representa 1,73 veces la inversión del año 2024, Aysén (1,55), Los Ríos (1,32) y Los Lagos (1,28) presentan los mayores incrementos, mientras que regiones como Atacama, Maule y la región Metropolitana tienen un decrecimiento en comparación a la inversión del año 2024.
+</div>
+
+
+```{r}
+orden_regiones_tab <- rev(orden_regiones)
+
+
+tab1 <- BASE %>% group_by(RegionAB) %>% summarise("Monto 2025" = sum(`Monto 2025`)) %>% 
+  mutate(
+    RegionAB = factor(RegionAB, levels = orden_regiones)
+  )  %>% arrange(RegionAB) 
+
+
+
+
+
+
+tab1 <- tab1 %>%
+  mutate(
+    IncDec = round(`Monto 2025` / INV_2024, 2),  
+    Flecha = case_when(
+      IncDec > 1 ~ "↑",  
+      IncDec < 1 ~ "↓",  
+      TRUE ~ "="         
+    ),
+
+    Label = paste0(
+      scales::comma(`Monto 2025`, big.mark = ".", decimal.mark = ","),  
+      "   ",  
+      "<span style='color:red;'>", Flecha, "</span>",
+      "   (", scales::comma(IncDec, big.mark = ".", decimal.mark = ","), ")"  
+    )
+  )
+
+
+  
+
+```
+
+```{r, fig.cap=NULL}
+
+
+ggplot(tab1, aes(y = RegionAB, x = `Monto 2025`)) +
+  geom_bar(stat = "identity", fill = "darkblue", width = 0.6) +
+  theme_minimal() +
+
+  ggtext::geom_richtext(aes(label = Label), 
+                        hjust = -0.1, size = 3, 
+                        fill = NA, label.color = NA) + 
+  scale_x_continuous(
+    labels = label_number(scale = 1e-6, suffix = "M"), 
+    limits = c(0, 636729160),
+    breaks = seq(0, 506729160, by = 100000000)) +
+  labs(
+    title = "Inversión 2025 a nivel Regional e Interregional",
+    x = "Inversión (miles de pesos)",  
+    y = "",
+    caption =  "Figura 1: Inversión a nivel Regional e Interregional.\nFuente: Elaboración propia basada en datos del Departamento de Gestión Presupuestaria.\nNota: Sentido de la flecha (arriba/abajo) indica crecimiento o decrecimiento en comparación al presupuesto del año 2024 y entre\n paréntesis se indica el factor de crecimiento o decrecimiento."
+  ) +
+   theme(
+     panel.background = element_rect(fill = "white", color = NA), 
+    panel.border = element_rect(color = "black", fill = NA, size = 0.5),  
+    plot.caption = element_text(hjust = 0, size = 9, margin = margin(t = 10, r = 100, b = 5, l=-150), color = "#555555"),
+    axis.text.x = element_text(vjust = -0.3), 
+    axis.text.y = element_text(size = 10, margin = margin(r = 20)),  
+    axis.title.x = element_text(size = 10, margin = margin(t = 10)),
+    axis.title.y = element_text(size = 10, margin = margin(r = 20)),
+    plot.title = element_text(size = 12, face = "bold", hjust = 0.5, margin = margin(b = 20))
+  )
+
+
+```
+
+<div style="text-align: justify;">
+La "Tabla 1" muestra la distribución de la inversión en relación con la población proyectada, el crecimiento demográfico y la cantidad de personas en situación de pobreza multidimensional en cada región de Chile. Se observa que la región Metropolitana experimenta el mayor crecimiento relativo poblacional, con un aumento del 36,50% entre 2017 y 2025, seguida de Tarapacá (21,81%) y Antofagasta (23,59%). En contraste, las regiones con menor crecimiento relativo son Biobío (7,38%), Aysén (7,57%) y Magallanes (11%).
+</div>
+
+
+<div style="text-align: justify;">
+En términos de pobreza multidimensional, la región Metropolitana registra la mayor cantidad de personas en esta condición (1.422.103), seguida de Valparaíso (344.858) y Biobío (237.185), lo que indica desafíos significativos en el acceso a servicios y calidad de vida. Por otro lado, Magallanes y Aysén presentan las cifras más bajas, con 12.472 y 15.113 personas respectivamente.
+</div>
+
+
+<div style="text-align: justify;">
+En algunas regiones, se observa una correspondencia directa entre la Inversión y la densidad poblacional proyectada para ese año. La región Metropolitana de Santiago, Biobío y Los Lagos, que presentan una alta densidad poblacional, concentran también los mayores montos de inversión. Sin embargo, esta relación no se mantiene en todos los casos. Por ejemplo, la región de Los Ríos, con 263.279.097 miles de pesos, recibe una inversión mayor que otras regiones con mayor crecimiento poblacional y mayor cantidad de personas en situación de pobreza multidimensional, como Antofagasta o Valparaíso, lo que sugiere que otros factores además de la población influyen en la distribución de los recursos.
+</div>
+
+
+```{r, tab.cap=NULL}
+
+#Esta es la tabla de las poblaciones, aquí ocupo las dos bases
+#para poder ver aquellas comunas que no tengan inversión.
+
+
+
+tab_poblacion_nac <- PROYECCIONES_POBmulti %>%
+  group_by(RegionAB) %>%
+  summarise(
+    "Población 2017" = sum(TOTAL2017), 
+    "Población 2025" = sum(`Suma de Poblacion 2025`), 
+   "Crec/Decrec relativo de población 2017 al 2025" = format(
+  round((first(`Suma de Poblacion 2025`) - first(TOTAL2017)) / first(TOTAL2017) * 100, 2), 
+  big.mark = ".", 
+  decimal.mark = ",", 
+  nsmall = 2
+),
+    "Pobreza Multidimensional" = scales::comma(
+  round(sum(`Número de personas en situación de pobreza multidimensional (**)`)), 
+  big.mark = "."
+)
+
+  )
+
+
+tab_monto_nac <- BASE %>%
+  select(RegionAB, `Monto 2025`) %>%
+  group_by(RegionAB) %>%
+  summarise("Monto2025" = sum(`Monto 2025`))
+
+
+tab_resumen_nac <- left_join(tab_poblacion_nac,tab_monto_nac, by = "RegionAB")  %>% 
+  mutate(RegionAB = factor(RegionAB, levels = rev(orden_regiones))) %>% 
+arrange(RegionAB) %>% 
+  filter(RegionAB != "INTERREGIONAL")
+
+
+
+
+tab_resumen_nac %>%
+  mutate(`Población 2017` = scales::comma(`Población 2017`, big.mark = ".", decimal.mark = ","), 
+         `Población 2025` = scales::comma(`Población 2025`, big.mark = ".", decimal.mark = ","), 
+         Monto2025 = scales::comma(Monto2025, big.mark = ".", decimal.mark = ","),
+         `Pobreza Multidimensional`  = replace_na(`Pobreza Multidimensional`, "12.472")) %>%
+  kable("html", 
+        col.names = c("Región", "Población 2017", "Población 2025 (*)", 
+                      "Crec/Decrec relativo de población 2017 al 2025 (%)", 
+                      "N° de personas en situación de pobreza multidimensional (**)", 
+                      "Inversión")) %>%
+  kable_styling(full_width = FALSE, 
+                bootstrap_options = c("striped", "hover", "condensed", "responsive"))%>%
+footnote(general = "<span style='font-size: 12px;'>Tabla 1: Poblaciones en regiones de Chile. Fuente: Elaboración propia basada en datos del INE, del Departamento de Gestión Presupuestaria y CASEN 2022. (*) Población proyectada al 2025 según el INE. (**) Indica la cantidad de personas en situación de pobreza multidimensional para el año 2022. Nota: Los montos de inversión presentados no incluyen la participación de las regiones en proyectos de carácter interregional.</span>", 
+           general_title = "", 
+           escape = FALSE) 
+  
+```
+
+<div style="text-align: justify;">
+A través de la Figura 2, se observa que la inversión proyectada para 2025 es, en general, mayor en los proyectos nuevos en comparación con los proyectos de arrastre. Esta tendencia se presenta en los proyectos interregionales y en once regiones del país. Sin embargo, en cinco regiones —Tarapacá, Valparaíso, Maule, La Araucanía y Magallanes— la inversión destinada a proyectos de arrastre supera a la de los nuevos, lo que sugiere una mayor priorización de la continuidad y finalización de iniciativas previamente comenzadas en estas regiones.
+</div>
+
+
+
+```{r, fig.cap= NULL}
+
+
+
+tabREG_CAT <- BASE %>%
+  group_by(RegionAB, Categoría) %>%
+  summarise(TotalCat = sum(`Monto 2025`), .groups = "keep") %>%
+  mutate(RegionAB = factor(RegionAB, levels = orden_regiones)) %>%
+  arrange(RegionAB, Categoría)
+
+
+nuevos_nac <- tabREG_CAT %>% filter(Categoría == "Nuevo")
+arrastre_nac <- tabREG_CAT %>% filter(Categoría == "Arrastre")
+#sum(nuevos_nac$TotalCat)
+#sum(arrastre_nac$TotalCat)
+
+ggplot(tabREG_CAT, aes(x = RegionAB, y = TotalCat, fill = Categoría)) +
+  facet_wrap(~Categoría, scales = "free_y", nrow = 1, , labeller = as_labeller(c("Arrastre" = "Proyectos de Arrastre", "Nuevo" = "Proyectos Nuevos"))) + 
+  geom_bar(stat = "identity", position = "stack", width = 0.6) + 
+  geom_text(aes(label = scales::comma(TotalCat, big.mark = ".", decimal.mark = ",")), 
+            hjust = -0.1, color = "black", size = 3) +
+  scale_y_continuous(
+    labels = label_number(scale = 1e-6, suffix = "M"),
+    limits = function(x) {
+      if ("Arrastre" %in% tabREG_CAT$Categoría) {
+        c(0, 599565751)  
+      } else {
+        NULL  
+      }
+    }
+  ) + 
+  labs(
+    caption = "Figura 2 : Inversión desglosada por proyectos nuevos y de arrastre. \n Fuente: Elaboración propia a partir de los datos del Departamento de Gestión Presupuestaria",
+    title = "Inversión 2025 por Región y Clasificación del Proyecto (Arrastre y Nuevo)",
+    x = "",
+    y = "Inversión (miles de pesos)"
+  ) +
+  scale_fill_manual(values = alpha(c("cornsilk4", "darkblue"), .7)) +
+  theme_minimal() +  
+  theme(panel.background = element_rect(fill = "white", color = NA),
+     panel.spacing = unit(0.8, "lines"), 
+    panel.border = element_rect(color = "black", fill = NA, size = 0.0005),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.ticks.y = element_blank(),
+    legend.title = element_blank(),  
+    legend.position = "none",
+    strip.background = element_rect(color = "black", linewidth = 1),
+    strip.text = element_text(size = 10),
+     plot.caption = element_text(hjust = 0, size = 9, margin = margin(t = 10, r = 100, b = 5, l=-85), color = "#555555"),
+    plot.title = element_text(size = 10, face = "bold", hjust = 0.5, margin = margin(b = 20))) +
+  coord_flip()
+
+
+
+```
+
+
+
+<div style="text-align: justify;">
+La "Figura 3" muestra que el Eje Ministerial con mayor inversión a nivel nacional es 'Integración territorial, conectividad y movilidad', representa el 35% en proyectos de arrastre y el 41,2% en proyectos nuevos, lo que equivale al 76,2% de la inversión total. Esto refleja una fuerte priorización en infraestructura y conectividad a nivel nacional.
+</div>
+
+<div style="text-align: justify;">
+Por otro lado, el eje de Seguridad Hídrica presenta una mayor inversión en proyectos nuevos (6,5%) en comparación con los proyectos de arrastre (5,9%), lo que sugiere un enfoque en el desarrollo de nuevas infraestructuras y sistemas de gestión del recurso hídrico. En la misma línea, el eje de 'Seguridad Ciudadana y ante desastres naturales y emergencias' también recibe un mayor porcentaje de inversión en proyectos nuevos (4.4%). Sin embargo, a diferencia de los ejes anteriores, el eje de 'Desarrollo Productivo, Social, Cultural y Científico' muestra una tendencia inversa, con una mayor inversión en proyectos de arrastre (3,1%) en comparación con proyectos nuevos (1,8%). 
+</div>
+
+
+
+```{r, fig.cap=NULL}
+
+tab_eje_ministerial_cat_nac <- BASE %>%
+  filter(!is.na(`Eje Ministerial`)) %>% 
+  group_by(`Eje Ministerial`, Categoría) %>%
+  summarise(Monto2025 = sum(`Monto 2025`), .groups = "drop") %>%
+  ungroup() %>%  
+  mutate(
+    total_global = sum(Monto2025),  
+    porcentaje = round(Monto2025 / total_global * 100 ,2)
+  )
+
+
+
+colores <- c(
+  "Integración territorial, conectividad y movilidad" = "#155E95",
+  "Desarrollo Productivo, Social, Cultural y Científico" = "#98D8EF",
+  "Seguridad Ciudadana y ante desastres naturales y emergencias" = "#4C7B8B",
+  "Seguridad hídrica" = "#F4EDD3"
+)
+
+
+
+
+ggplot(tab_eje_ministerial_cat_nac, aes(x = `Eje Ministerial`, y = Monto2025, fill = `Eje Ministerial`)) +
+  facet_wrap(~ Categoría, labeller = as_labeller(c("Arrastre" = "Proyectos de Arrastre", "Nuevo" = "Proyectos Nuevos"))) +
+  labs(
+    title = "Inversión 2025 por clasificación de proyecto (arrastre y nuevo) y Eje Ministerial \n a nivel Nacional", 
+    x = "", 
+    y = "Inversión (miles de pesos)", 
+    fill = "",
+    caption = "Figura 3: Inversión 2025 por categoría de proyecto (nuevo y arrastre) y por los cuatro ejes ministeriales. Fuente: Elaboración propia a \npartir de los datos del Departamento de Gestión Presupuestaria. Nota 1: La suma de todos los porcentajes es un 100%. \nNota 2: Existe un proyecto perteneciente a los proyectos interregionales sin clasificación dentro de los ejes ministeriales, \nidentificado con el código de proyecto 58309, por lo que no ha sido considerado en este gráfico."
+  ) + 
+  geom_bar(stat = "identity", width = 0.6) + 
+  geom_text(
+    aes(
+      label = paste0(
+  scales::comma(Monto2025, big.mark = ".", decimal.mark = ","), 
+  "\n", 
+  scales::comma(round(porcentaje, 1), big.mark = ".", decimal.mark = ","), "%"
+)), 
+    vjust = -0.5, 
+    size = 2.5, 
+    color = "black", 
+    fontface = "bold",
+    show.legend = FALSE
+  ) +
+   scale_fill_manual(values = colores) +
+  theme(
+    panel.background = element_rect(fill = "white", color = NA),
+     panel.spacing = unit(0.8, "lines"), 
+    panel.border = element_rect(color = "black", fill = NA, size = 0.0005),
+    axis.text.x = element_blank(), 
+    axis.text.y = element_text(size = 9),
+    strip.text = element_text(size = 9),
+    strip.background = element_rect(fill = "white", color = "black"),
+    panel.grid.major = element_line(color = "gray90"),
+    panel.grid.minor = element_line(color = "gray90"),
+    legend.text = element_text(size = 8.5),
+    legend.title = element_blank(),
+    legend.position = "bottom",
+    legend.justification = c(0.9, 0),
+    legend.spacing.x = unit(0.05, "cm"),  
+    legend.spacing.y = unit(0.02, "cm"),
+    legend.box = "horizontal", 
+    legend.key.size = unit(0.4, "cm"),
+    legend.box.spacing = unit(0.5, "cm"), 
+    plot.margin = margin(t = 10, r = 10, b = 10, l = 10),
+    plot.title = element_text(size = 12, face = "bold", hjust = 0.5, margin = margin(b = 20)), 
+    plot.caption = element_text(hjust = 0, size = 9, margin = margin(t = 10, r = 100, b = 5, l=-55), color = "#555555")) +
+  guides(fill = guide_legend(nrow = 3, byrow = TRUE)) + 
+  scale_y_continuous(
+  labels = label_number(scale = 1e-6, suffix = "M"),
+  expand = expansion(mult = c(0, 0.3)) 
+)  
+
+
+
+
+```
+
+
+<div style="text-align: justify;">
+La "Figura 4" muestra la distribución de la inversión 2025 para los servicios asociados al Ministerio de Obras Públicas (MOP) a nivel nacional. Se observa que la mayor inversión se destina a Dirección de Vialidad (DV), con un monto de 2.191.526.451 miles de pesos, lo que representa 57,2% del total.
+</div>
+
+<div style="text-align: justify;">
+En segundo lugar, el servicio DGC recibe una inversión de 649.835.693 (miles de pesos), seguido por SSR, con 329.603.442 (miles de pesos), y DOH, con 308.121.429 (miles de pesos).
+Dentro de la categoría "Otros", se destaca que el servicio DA recibe la mayor inversión con 1,491%, seguido por DGA (0,592%). Los servicios DP, INH y SISS tienen una inversión significativamente menor, y cada uno representa menos del 0.1%.
+</div>
+
+
+```{r, fig.cap=NULL}
+
+
+
+colores_servicios <- c("DV" = "#000957", "DGC" = "#155E95", "SSR" = "#4C585B","DOH" = "#7E99A3", 
+            "DAP" = "#344CB7", "DOP" = "#98D8EF", "DA" = "#C4D9FF", "DGA" ="#1A3A6E", 
+            "DP" = "#537895","ING" = "#A1BBCF", "OTROS" ="#D9ECFF", "SISS" ="#7B8FA6")
+
+
+SERVICIOS_NAC <- BASE %>%
+  group_by(SERVICIOS_A) %>%
+  summarise(Monto2025 = sum(`Monto 2025`, na.rm = TRUE)) %>%
+  mutate(Porcentaje = round(Monto2025 / sum(Monto2025) * 100,1))
+
+
+ggplot(SERVICIOS_NAC , aes(x = reorder(SERVICIOS_A, -Monto2025), y = Monto2025, fill = SERVICIOS_A)) +
+  geom_bar(stat = "identity", width = 0.6) +
+  geom_text(aes(label = paste0(scales::comma(Monto2025, big.mark = ".", decimal.mark = ","), 
+               "\n(", format(Porcentaje, nsmall = 1, decimal.mark = ","), "%)")), vjust = -0.5, size = 3, 
+    color = "black", 
+    fontface = "bold",) +
+  labs(title = "Distribución de Inversión 2025 por servicios MOP a nivel nacional",
+       x = "",
+       y = "Inversión (miles de pesos)",
+       caption = "Figura 4: Inversión 2025 para los servicios asociados al MOP. Fuente: Elaboración propia a partir de los datos del \n Departamento de Gestión Presupuestaria. Nota: La categoría 'Otros' comprende los servicios DA, DGA, DP, SISS e INH.") +
+  scale_fill_manual(values = colores_servicios) +
+  scale_y_continuous(limits = c(0, max(SERVICIOS_NAC$Monto2025) * 1.1), labels = label_number(scale = 1e-6, suffix = "M")) +
+  theme_minimal()+
+  theme( panel.background = element_rect(fill = "white", color = NA), 
+    panel.border = element_rect(color = "black", fill = NA, size = 0.5),
+    legend.position = "none", 
+        plot.title = element_text(size = 12, face = "bold", hjust = 0.5, margin = margin(b = 20)),
+        plot.caption = element_text(size = 9, hjust = -0.2, margin = margin(t = 20, l =-40), color = "#555555"))
+
+
+
+otros_data <- BASE %>%
+  group_by(Servicio) %>%
+  summarise(Monto = sum(`Monto 2025`, na.rm = TRUE)) %>%
+  mutate(Porcentaje = round(Monto / sum(Monto) * 100,4)) %>% 
+  filter(Servicio %in% c("INH", "SISS", "DP", "DGA", "DA")) %>%
+  mutate(
+    Monto = scales::comma(Monto, big.mark = ".", decimal.mark = ","),
+    Porcentaje = scales::comma(round(Porcentaje, 3), big.mark = ".", decimal.mark = ",")
+  )
+
+
+
+
+kable(otros_data, "html", col.names = c("Servicio", "Inversión", "Porcentaje (%)")) %>%
+  kable_styling(full_width = FALSE, 
+                bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+  footnote(general = "<span style='font-size: 12px;'>Tabla 2: Servicios agrupados en 'Otros', los cuáles incluyen DA, DGA, DP, SISS e INH. Fuente: tabla construida a partir de los datos del Departamento de Gestión Presupuestaria</span>", 
+           general_title = "", 
+           escape = FALSE)
+
+
+```
+
+
+<div style="text-align: justify;">
+En la Figura 5, se muestra la distribución de la inversión de proyectos categorizados como nuevos pertenecientes al eje de Seguridad Hídrica, se puede notar una clara prioridad en el abastecimiento de agua potable y riego. Gran parte del porcentaje de la inversión es asignado a 'Consumo Humano' (47,23%) y 'Riego' (43,7%). En contraste, la inversión en 'Estudios y Otros' (6,78%) y en 'Gestión' (2,29%) es significativamente menor.
+</div>
+
+
+```{r, fig.cap=NULL}
+
+
+SH_NAC <- BASE %>%
+  filter(`Eje Ministerial` == "Seguridad hídrica" & Categoría == "Nuevo") %>%
+  group_by(AGUA_DIPRES) %>%
+  summarise(monto2025 = sum(`Monto 2025`, na.rm = TRUE)) %>%
+  mutate(
+    porcentaje = round((monto2025 / sum(monto2025)) * 100,2)
+  )
+
+ggplot(SH_NAC, aes(x = reorder(AGUA_DIPRES, porcentaje), y = porcentaje)) +
+  geom_segment(aes(xend = AGUA_DIPRES, y = 0, yend = porcentaje), color = "gray") + 
+  geom_point(aes(size = porcentaje), color = "skyblue", fill = "white", shape = 21, stroke = 3) + 
+  geom_text(
+    aes(
+  label = paste0(scales::comma(monto2025, big.mark = ".", decimal.mark = ","), 
+               "\n(", format(porcentaje, nsmall = 1, decimal.mark = ","), "%)") ),
+    fontface = "bold",
+    vjust = 1.6,
+    size = 2.7
+  ) +
+  coord_flip() + 
+  labs(
+    title = "Asignación de la Inversión 2025 en Nuevos Proyectos del Eje de Seguridad Hídrica a nivel nacional",
+    x = NULL,
+    y = "",
+    caption = "Figura 5: Inversión 2025 en proyectos categorizados como nuevos pertenencientes al eje ministerial de Seguridad Hídrica. \nFuente: Elaboración propia a partir de datos del Departamento de Gestión Presupuestaria. \nNota: La categorización del programa fue realizada en cuatro clases. La primera es 'Consumo Humano' que está \ncompuesta por los programas pertenecientes a: agua potable rural semi-concentrada, agua potable rural concentrada, agua \npotable rural disperso, ampliación y mejoramiento de servicios existentes de agua potable rural y conservación de sistemas \nsanitarios rurales. La segunda es 'Riego' que agrupa: grandes obras de riego, conservación de obras de riego, obras \nmedianas de riego y obras de riego. La categoría 'Estudios y otros' reúne los siguientes programas asociados: Estudios, \nConstrucción y Reconstrucción. Finalmente, la categoría 'Gestión' abarca: redes de medición y análisis y evaluación. "
+  ) +
+  theme_minimal() +
+  theme(
+    plot.caption = element_text(hjust = 0, size = 9, margin = margin(t = 10, r = 100, b = 5, l=-85), color = "#555555"),
+    panel.grid.major.y = element_blank(),
+    legend.position = "none",
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_line(color = "gray", linetype = "dashed"),
+    axis.text.y = element_text(size = 8),
+    plot.title = element_text(size = 10, hjust = 1, face = "bold", margin = margin(b = 20)) ) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1, decimal.mark = ","))+
+  expand_limits(y = c(0, max(SH_NAC$porcentaje) + 5))
+
+
+
+```
+
+
+
+
+## Conclusiones
+
+
+<div style="text-align: justify;">
+
+1. A nivel nacional, la región que recibe mayor inversión es la región Metropolitana de Santiago (395.230.086 miles de pesos), sin embargo, es una cifra 0,88 veces menor en comparación al año 2024, año en el que se le asigna 450.284.587 (miles de pesos). <br>
+
+2. La región a la que se le asigna un menor monto de inversión en el año 2025, es Tarapacá (106.831.166 miles de pesos), a pesar de ser el menor monto, es la región cuyo aumento relativo al 2024 es el mayor, ya que crece en 1,73 veces en comparación a ese año (61.774.839 miles de pesos).<br>
+
+3. Los proyectos nuevos concentran mayor parte de la inversión de 2025 a nivel nacional (2.066.634.813 miles de pesos) en comparación a los proyectos de arrastre (1.762.420.412 miles de pesos). Esta situación es generalizada para todas las regiones de Chile -incluyendo los proyectos interregionales- a excepción de cinco regiones, en las cuáles lidera la inversión en proyectos de arrastre -Tarapacá, Valparaíso, Maule, La Araucanía y Magallanes-.<br>
+
+4. El eje ministerial que recibe una mayor cantidad de inversión a nivel nacional, es el de 'Integración territorial, conectividad y movilidad', debido a que agrupa proyectos de los servicios DGC y DV.<br>
+
+5. A nivel nacional, los proyectos nuevos dentro del eje ministerial de 'Seguridad Hídrica' concentran gran parte de la inversión en los proyectos relacionados a la categoría de 'Consumo humano' y 'Riego', en conjunto consideran el 90.93% de la inversión en esta área.<br>
+
+</div>
+
+
+## Fuentes
+
+<div style="text-align: justify;">
+1. Número de regiones, provincias y comunas fueron recuperados de: Planilla Códigos Únicos Territoriales (CUT), 2018. Subsecretaría de Desarrollo Regional y Administrativo (SUBDERE). Recuperado a partir de: https://www.subdere.gov.cl/documentacion/c%C3%B3digos-%C3%BAnicos-territoriales-actualizados-al-06-de-septiembre-2018 <br>
+
+
+2. Proyección de población, INE. Recuperado a partir de: https://www.ine.gob.cl//estadisticas/sociales/demografia-y-vitales/proyecciones-de-poblacion <br>
+
+3. Estimación de pobreza, casen 2022. Recuperado a partir de: https://observatorio.ministeriodesarrollosocial.gob.cl/pobreza-comunal-2022 <br>
+
+4. Propir de los años 2024 y 2025. Recuperado a partir del Departamento de Gestión Presupuestaria <br>
+
+5. Censo 2017, INE. Recuperado a partir de: https://www.ine.gob.cl/estadisticas/sociales/censos-de-poblacion-y-vivienda/censo-de-poblacion-y-vivienda
+</div>
+
+
+
